@@ -1,0 +1,1622 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Best Sid's — Weekly Work Schedule & Payroll Manager</title>
+<style>
+  :root {
+    --bg-main: #0f172a;
+    --bg-card: #1e293b;
+    --bg-card-hover: #273549;
+    --border-color: #334155;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --accent-blue: #38bdf8;
+    --accent-indigo: #6366f1;
+    --accent-emerald: #10b981;
+    --accent-amber: #f59e0b;
+    --accent-rose: #f43f5e;
+    --editable-yellow: #fef08a;
+    --editable-gray: #e2e8f0;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+  }
+
+  body {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    min-height: 100vh;
+    padding: 8px 14px;
+    user-select: none;
+  }
+
+  /* Compact Single-Line Top Header Bar */
+  .topbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 7px 14px;
+    margin-bottom: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+
+  .brand-badge {
+    background: linear-gradient(135deg, #38bdf8, #6366f1);
+    color: #fff;
+    font-weight: 800;
+    font-size: 14px;
+    padding: 4px 10px;
+    border-radius: 7px;
+    letter-spacing: 0.5px;
+  }
+
+  .brand-title h1 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #f8fafc;
+    line-height: 1.2;
+  }
+
+  .controls-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .control-box {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #0f172a;
+    border: 1px solid var(--border-color);
+    padding: 3px 8px;
+    border-radius: 8px;
+    font-size: 12px;
+  }
+
+  .control-box label {
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 11.5px;
+  }
+
+  input[type="date"].editable-date {
+    background-color: #fef08a;
+    color: #0f172a;
+    font-weight: 700;
+    border: 1.5px solid #eab308;
+    border-radius: 5px;
+    padding: 2px 6px;
+    font-size: 12px;
+    cursor: pointer;
+    outline: none;
+  }
+
+  select.history-select {
+    background-color: #1e293b;
+    color: #f8fafc;
+    border: 1px solid #475569;
+    border-radius: 5px;
+    padding: 3px 7px;
+    font-size: 12px;
+    min-width: 165px;
+    cursor: pointer;
+    outline: none;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .btn:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.08);
+  }
+
+  .btn:active {
+    transform: translateY(0);
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #3b82f6, #6366f1);
+    color: white;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  }
+
+  .btn-success {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  }
+
+  .btn-warning {
+    background: #334155;
+    color: #f8fafc;
+    border: 1px solid #475569;
+  }
+
+  .btn-danger {
+    background: rgba(244, 63, 94, 0.15);
+    color: #fda4af;
+    border: 1px solid rgba(244, 63, 94, 0.4);
+  }
+
+  /* Compact Active Brush & Quick Info Bar */
+  .palette-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 6px 12px;
+    margin-bottom: 8px;
+  }
+
+  .palette-left {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .palette-label {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--accent-blue);
+    margin-right: 2px;
+  }
+
+  .emp-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #0f172a;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.12s ease;
+  }
+
+  .emp-chip.active {
+    border-color: #ffffff;
+    box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.75);
+    transform: scale(1.04);
+  }
+
+  .emp-chip.eraser {
+    background: #334155;
+    color: #f8fafc;
+    border: 1px dashed #94a3b8;
+  }
+
+  .emp-chip.eraser.active {
+    border: 2px solid #f43f5e;
+    box-shadow: 0 0 0 2px rgba(244, 63, 94, 0.45);
+  }
+
+  .hint-badge {
+    font-size: 11.5px;
+    color: #cbd5e1;
+    background: #0f172a;
+    padding: 3px 9px;
+    border-radius: 6px;
+    border: 1px solid #334155;
+  }
+
+  .hint-badge strong {
+    color: #38bdf8;
+  }
+
+  /* Main Layout Cards */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+    overflow-x: auto;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 7px;
+  }
+
+  .card-title {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #f8fafc;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .kpi-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .kpi-pill {
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 7px;
+    padding: 3px 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+  }
+
+  .kpi-pill span.lbl {
+    color: var(--text-secondary);
+    font-size: 11.5px;
+  }
+
+  .kpi-pill span.val {
+    font-weight: 800;
+    font-size: 13.5px;
+    color: #38bdf8;
+  }
+
+  .kpi-pill span.val.money {
+    color: #34d399;
+  }
+
+  /* Schedule Grid Table */
+  table.schedule-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 980px;
+    font-size: 12px;
+  }
+
+  table.schedule-table th,
+  table.schedule-table td {
+    border: 1px solid #334155;
+    text-align: center;
+    height: 23px;
+  }
+
+  table.schedule-table thead th {
+    background: #0f172a;
+    color: #e2e8f0;
+    font-weight: 700;
+    padding: 3px 4px;
+  }
+
+  .date-header {
+    color: #38bdf8 !important;
+    font-size: 12.5px;
+    background: #131c31 !important;
+  }
+
+  /* Larger Day Font Size as requested */
+  .day-header {
+    font-size: 15.5px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.5px;
+    padding: 4px 4px !important;
+  }
+
+  .day-header.weekend {
+    color: #fbbf24 !important;
+  }
+
+  .day-header-inner {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .expand-day-btn {
+    background: rgba(56, 189, 248, 0.16);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.45);
+    border-radius: 5px;
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 1px 5px;
+    cursor: pointer;
+    line-height: 1.2;
+    transition: all 0.15s ease;
+  }
+
+  .expand-day-btn:hover {
+    background: #38bdf8;
+    color: #0f172a;
+  }
+
+  .expand-day-btn.expanded {
+    background: rgba(245, 158, 11, 0.22);
+    color: #fbbf24;
+    border-color: rgba(245, 158, 11, 0.55);
+  }
+
+  .expand-day-btn.expanded:hover {
+    background: #f59e0b;
+    color: #0f172a;
+  }
+
+  .expand-day-btn.has-hidden-data {
+    box-shadow: 0 0 0 1.5px #f59e0b;
+    color: #fde047;
+  }
+
+  .ampm-cell {
+    background: #0f172a;
+    color: #94a3b8;
+    font-weight: 800;
+    width: 38px;
+    letter-spacing: 1px;
+  }
+
+  .time-cell {
+    background: #162032;
+    color: #cbd5e1;
+    font-weight: 600;
+    width: 64px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .slot-cell {
+    min-width: 48px;
+    font-weight: 700;
+    cursor: cell;
+    transition: transform 0.05s ease, box-shadow 0.05s ease;
+    position: relative;
+  }
+
+  .slot-cell.slot-3 {
+    border-left: 1px dashed #475569;
+  }
+
+  .slot-cell:hover {
+    outline: 2px solid #38bdf8;
+    z-index: 2;
+  }
+
+  .slot-cell.empty {
+    background-color: #1e293b;
+    color: transparent;
+  }
+
+  .slot-cell.empty:hover {
+    background-color: #283548;
+  }
+
+  /* Day Divider thick border */
+  .day-end {
+    border-right: 2px solid #64748b !important;
+  }
+
+  /* Summary & Payroll Table */
+  table.summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 980px;
+    font-size: 12px;
+  }
+
+  table.summary-table th,
+  table.summary-table td {
+    border: 1px solid #334155;
+    text-align: center;
+    height: 30px;
+    padding: 2px 5px;
+  }
+
+  table.summary-table thead th {
+    background: #0f172a;
+    color: #e2e8f0;
+    font-weight: 700;
+  }
+
+  .summary-day-th {
+    font-size: 14px !important;
+    font-weight: 800 !important;
+  }
+
+  .summary-day-th.weekend {
+    color: #fbbf24 !important;
+  }
+
+  /* Colored Editable Cells in Summary Table */
+  .editable-rate-cell {
+    background-color: #d9d9d9 !important;
+    color: #0f172a !important;
+    font-weight: 700;
+    width: 72px;
+  }
+
+  .editable-rate-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    text-align: center;
+    font-weight: 800;
+    font-size: 13px;
+    color: #0f172a;
+    outline: none;
+  }
+
+  .editable-rate-input:focus {
+    background: #fef08a;
+    border-radius: 4px;
+  }
+
+  .editable-name-cell {
+    background-color: #d8d8d8 !important;
+    color: #0f172a !important;
+    font-weight: 700;
+    width: 105px;
+    position: relative;
+  }
+
+  .editable-name-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    text-align: center;
+    font-weight: 800;
+    font-size: 13px;
+    color: #0f172a;
+    outline: none;
+  }
+
+  .editable-name-input:focus {
+    background: #fef08a;
+    border-radius: 4px;
+  }
+
+  .count-cell {
+    color: #e2e8f0;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .count-cell.zero {
+    color: #475569;
+  }
+
+  .total-hrs-cell {
+    background: #162032;
+    font-weight: 800;
+    color: #38bdf8;
+    width: 60px;
+  }
+
+  .wage-cell {
+    background: #132524;
+    font-weight: 800;
+    color: #34d399;
+    width: 110px;
+    text-align: right !important;
+    padding-right: 10px !important;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .del-emp-btn {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  .del-emp-btn:hover {
+    color: #f43f5e;
+    background: rgba(244, 63, 94, 0.15);
+  }
+
+  /* Add Employee Inline Form */
+  .add-emp-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed #334155;
+  }
+
+  .add-emp-bar input[type="text"],
+  .add-emp-bar input[type="number"] {
+    background: #0f172a;
+    border: 1px solid #475569;
+    color: #f8fafc;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    outline: none;
+  }
+
+  .add-emp-bar input[type="color"] {
+    width: 36px;
+    height: 32px;
+    border: 1px solid #475569;
+    border-radius: 8px;
+    background: #0f172a;
+    cursor: pointer;
+    padding: 2px;
+  }
+
+  /* Toast Notification */
+  .toast {
+    position: fixed;
+    bottom: 22px;
+    right: 22px;
+    background: #10b981;
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 13px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    transform: translateY(15px);
+    transition: all 0.25s ease;
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  
+  /* Cloud Sync Badge & Modal */
+  .cloud-btn {
+    background: #1e293b;
+    color: #e2e8f0;
+    border: 1px solid #475569;
+  }
+  .cloud-btn.connected {
+    background: rgba(16, 185, 129, 0.18);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.5);
+  }
+  .cloud-btn.syncing {
+    background: rgba(56, 189, 248, 0.2);
+    color: #38bdf8;
+    border: 1px solid #38bdf8;
+  }
+  .modal-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.72);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  .modal-backdrop.open {
+    display: flex;
+  }
+  .modal-box {
+    background: #1e293b;
+    border: 1px solid #475569;
+    border-radius: 14px;
+    max-width: 540px;
+    width: 100%;
+    padding: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    color: #f8fafc;
+  }
+  .modal-box h2 {
+    font-size: 17px;
+    margin-bottom: 8px;
+    color: #38bdf8;
+  }
+  .modal-box p {
+    font-size: 12.5px;
+    color: #cbd5e1;
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+  .modal-box input[type="text"] {
+    width: 100%;
+    background: #0f172a;
+    border: 1px solid #475569;
+    color: #f8fafc;
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 12px;
+    outline: none;
+  }
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  /* Print Styles */
+  @media print {
+    body {
+      background: #ffffff !important;
+      color: #000000 !important;
+      padding: 0 !important;
+    }
+    .topbar, .palette-bar, .add-emp-bar, .no-print, .expand-day-btn {
+      display: none !important;
+    }
+    .card {
+      background: #ffffff !important;
+      border: 1px solid #000 !important;
+      box-shadow: none !important;
+      padding: 6px !important;
+      margin-bottom: 10px !important;
+    }
+    table.schedule-table th, table.schedule-table td,
+    table.summary-table th, table.summary-table td {
+      border: 1px solid #444 !important;
+      color: #000 !important;
+      height: 22px !important;
+      font-size: 11px !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <!-- Top Control Bar -->
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-badge">SID'S</div>
+      <div class="brand-title">
+        <h1>Best Sid's — 주간 근무 일정 및 급여 관리 시스템</h1>
+      </div>
+    </div>
+
+    <div class="controls-group">
+      <div class="control-box" title="노란색 셀(B3): 주간 시작 날짜를 선택하면 7일간의 날짜가 자동 계산됩니다.">
+        <label for="startDateInput">📅 시작 날짜 (B3):</label>
+        <input type="date" id="startDateInput" class="editable-date" value="2026-11-23">
+      </div>
+
+      <div class="control-box">
+        <label for="historySelect">📂 주간 히스토리:</label>
+        <select id="historySelect" class="history-select" onchange="loadHistory(this.value)">
+          <option value="">-- 저장된 주간 기록 선택 --</option>
+        </select>
+        <button class="btn btn-success" onclick="saveCurrentWeekHistory()">💾 현재 주 저장</button>
+        <button class="btn btn-danger" onclick="deleteSelectedHistory()" title="선택된 히스토리 삭제">🗑️</button>
+      </div>
+
+      <button class="btn cloud-btn" id="cloudStatusBtn" onclick="openCloudModal()" title="Google Sheets 클라우드 연동 설정 및 동기화">☁️ 시트 연동 설정</button>
+      <button class="btn btn-primary" onclick="exportToCSV()">📥 엑셀(CSV)</button>
+      <button class="btn btn-warning" onclick="window.print()">🖨️ 인쇄</button>
+    </div>
+  </div>
+
+  <!-- Employee Brush Palette -->
+  <div class="palette-bar">
+    <div class="palette-left" id="empPalette">
+      <span class="palette-label">🎨 직원 선택:</span>
+    </div>
+    <div class="hint-badge">
+      💡 요일 옆 <strong>[+3인]</strong> 클릭 시 3번째 근무자 줄 펼침/접기 · 셀 <strong>클릭 &amp; 드래그</strong> 연속 복사
+    </div>
+  </div>
+
+  <!-- Main Schedule Grid Card -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">
+        📋 주간 근무 시간표 (6:00 AM ~ 2:00 AM · 기본 2인 / 바쁜 날 3인 교대 확장 가능)
+      </div>
+      <div class="kpi-row">
+        <div class="kpi-pill">
+          <span class="lbl">총 근무 배정 시간:</span>
+          <span class="val" id="totalAssignedHrs">0 hrs</span>
+        </div>
+        <div class="kpi-pill">
+          <span class="lbl">주간 총 예상 인건비:</span>
+          <span class="val money" id="totalWeeklyWage">$0</span>
+        </div>
+        <button class="btn btn-warning no-print" style="padding: 4px 9px; font-size: 11.5px;" onclick="toggleAllThirdSlots()">전체 3인 줄 펼치기/접기</button>
+        <button class="btn btn-danger no-print" style="padding: 4px 9px; font-size: 11.5px;" onclick="clearScheduleGrid()">일정표 전체 비우기</button>
+      </div>
+    </div>
+
+    <table class="schedule-table" id="scheduleTable">
+      <thead id="scheduleHead">
+      </thead>
+      <tbody id="scheduleBody">
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Employee Summary & Payroll Card -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">
+        👥 직원별 근무 시간 집계 및 주간 급여 (회색 바탕 셀: 시급 및 직원 이름 수정 가능)
+      </div>
+      <div style="font-size: 12px; color: var(--text-secondary);">
+        * 3번째 근무자 줄이 접혀 있어도 배정된 시간과 급여는 모두 자동 합산됩니다.
+      </div>
+    </div>
+
+    <table class="summary-table" id="summaryTable">
+      <thead id="summaryHead">
+      </thead>
+      <tbody id="summaryBody">
+      </tbody>
+    </table>
+
+    <!-- Register New Employee Section -->
+    <div class="add-emp-bar no-print">
+      <span style="font-size: 13px; font-weight: 700; color: #38bdf8;">➕ 신규 직원 등록:</span>
+      <input type="text" id="newEmpName" placeholder="직원 이름 (예: Tm8)" style="width: 150px;">
+      <input type="number" id="newEmpRate" placeholder="시급 ($)" value="22" min="0" step="0.5" style="width: 100px;">
+      <div style="display:flex; align-items:center; gap:6px; font-size:12px; color:#cbd5e1;">
+        <span>배경색:</span>
+        <input type="color" id="newEmpColor" value="#38bdf8">
+      </div>
+      <button class="btn btn-primary" onclick="registerNewEmployee()">직원 추가</button>
+    </div>
+  </div>
+
+  
+  <!-- Cloud Sync Setup Modal -->
+  <div class="modal-backdrop" id="cloudModal">
+    <div class="modal-box">
+      <h2>☁️ Google Sheets 실시간 클라우드 연동</h2>
+      <p>
+        Google Apps Script 웹 앱 URL을 한 번만 등록하면, PC·스마트폰·태블릿 어디서 접속하든 <strong>근무 시간표·직원 시급·주간 히스토리</strong>가 내 Google Sheets에 실시간 자동 저장됩니다.
+      </p>
+      <label style="display:block; font-size:12px; font-weight:700; color:#94a3b8; margin-bottom:5px;">Google Apps Script 웹 앱 URL (https://script.google.com/macros/s/.../exec)</label>
+      <input type="text" id="cloudUrlInput" placeholder="https://script.google.com/macros/s/AKfycb.../exec">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+        <button class="btn btn-warning" onclick="pullFromCloud(true)">🔄 지금 시트에서 불러오기</button>
+        <div class="modal-actions">
+          <button class="btn btn-danger" onclick="disconnectCloud()">연동 해제</button>
+          <button class="btn btn-warning" onclick="closeCloudModal()">닫기</button>
+          <button class="btn btn-success" onclick="saveCloudUrl()">저장 및 연결</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">저장되었습니다!</div>
+
+<script>
+
+  // ================= GOOGLE SHEETS CLOUD SYNC ENGINE =================
+  // 웹 앱 URL을 아래 따옴표 안에 직접 넣어 GitHub에 올리면, 다른 기기에서 열 때 URL 입력조차 필요 없습니다!
+  const DEFAULT_CLOUD_URL = 'https://script.google.com/macros/s/AKfycbxwVTJoa1wRwh_acPw68BRRxL64onyJiwPub_BjXx0tINMnyIfsp3B9aIxc3oPULvxg/exec';
+  const STORAGE_KEY_CLOUD_URL = 'best_sids_cloud_url_v1';
+  let cloudSyncTimer = null;
+
+  function getCloudUrl() {
+    return localStorage.getItem(STORAGE_KEY_CLOUD_URL) || DEFAULT_CLOUD_URL;
+  }
+
+  function updateCloudButtonUI(statusText, mode = 'idle') {
+    const btn = document.getElementById('cloudStatusBtn');
+    if (!btn) return;
+    btn.textContent = statusText;
+    btn.classList.remove('connected', 'syncing');
+    if (mode === 'connected') btn.classList.add('connected');
+    if (mode === 'syncing') btn.classList.add('syncing');
+  }
+
+  function openCloudModal() {
+    document.getElementById('cloudUrlInput').value = getCloudUrl();
+    document.getElementById('cloudModal').classList.add('open');
+  }
+
+  function closeCloudModal() {
+    document.getElementById('cloudModal').classList.remove('open');
+  }
+
+  async function saveCloudUrl() {
+    const url = document.getElementById('cloudUrlInput').value.trim();
+    if (!url || !url.startsWith('https://script.google.com/')) {
+      showToast('올바른 Google Apps Script 웹 앱 URL을 입력해주세요.', true);
+      return;
+    }
+    localStorage.setItem(STORAGE_KEY_CLOUD_URL, url);
+    closeCloudModal();
+    await pullFromCloud(true);
+  }
+
+  function disconnectCloud() {
+    localStorage.removeItem(STORAGE_KEY_CLOUD_URL);
+    document.getElementById('cloudUrlInput').value = '';
+    updateCloudButtonUI('☁️ 시트 연동 설정', 'idle');
+    closeCloudModal();
+    showToast('Google Sheets 연동이 해제되었습니다.');
+  }
+
+  async function pullFromCloud(notify = false) {
+    const url = getCloudUrl();
+    if (!url) {
+      updateCloudButtonUI('☁️ 시트 연동 설정', 'idle');
+      return;
+    }
+    updateCloudButtonUI('🔄 시트 동기화 중...', 'syncing');
+    try {
+      const res = await fetch(url, { method: 'GET' });
+      const data = await res.json();
+      if (data.status === 'ok') {
+        if (data.currentState && data.currentState.employees && data.currentState.grid) {
+          state.startDate = data.currentState.startDate || state.startDate;
+          state.employees = data.currentState.employees;
+          state.grid = normalizeGridTo3Slots(data.currentState.grid);
+          state.expandedDays = Array.isArray(data.currentState.expandedDays) && data.currentState.expandedDays.length === 7
+            ? data.currentState.expandedDays
+            : [false, false, false, false, false, false, false];
+          document.getElementById('startDateInput').value = state.startDate;
+          localStorage.setItem(STORAGE_KEY_CURRENT, JSON.stringify(state));
+          renderAll();
+        } else {
+          // First time connecting to an empty sheet: push current schedule up!
+          await pushCurrentToCloud();
+        }
+        if (Array.isArray(data.historyList)) {
+          localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(data.historyList));
+          refreshHistoryDropdown();
+        }
+        updateCloudButtonUI('☁️ 시트 연동됨', 'connected');
+        if (notify) showToast('Google Sheets와 성공적으로 동기화되었습니다!');
+      } else {
+        updateCloudButtonUI('⚠️ 시트 오류', 'idle');
+        if (notify) showToast(data.message || '시트 동기화 오류', true);
+      }
+    } catch (err) {
+      console.error('Cloud pull error:', err);
+      updateCloudButtonUI('⚠️ 오프라인(로컬)', 'idle');
+      if (notify) showToast('Google Sheets 연결에 실패했습니다. URL과 배포 권한(모든 사용자)을 확인해주세요.', true);
+    }
+  }
+
+  async function pushCurrentToCloud() {
+    const url = getCloudUrl();
+    if (!url) return;
+    updateCloudButtonUI('🔄 저장 중...', 'syncing');
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'saveCurrent', state: state })
+      });
+      const data = await res.json();
+      if (data.status === 'ok') {
+        updateCloudButtonUI('☁️ 시트 저장됨', 'connected');
+      } else {
+        updateCloudButtonUI('⚠️ 저장 오류', 'idle');
+      }
+    } catch (err) {
+      console.error('Cloud push error:', err);
+      updateCloudButtonUI('⚠️ 오프라인(로컬)', 'idle');
+    }
+  }
+
+  async function pushHistoryToCloud(action, payloadObj) {
+    const url = getCloudUrl();
+    if (!url) return;
+    updateCloudButtonUI('🔄 히스토리 동기화...', 'syncing');
+    try {
+      await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(Object.assign({ action: action }, payloadObj))
+      });
+      updateCloudButtonUI('☁️ 시트 저장됨', 'connected');
+    } catch (err) {
+      console.error('Cloud history error:', err);
+      updateCloudButtonUI('⚠️ 오프라인(로컬)', 'idle');
+    }
+  }
+
+  const TIME_SLOTS = ["6~7", "7~8", "8~9", "9~10", "10~11", "11~12", "12~1", "1~2", "2~3", "3~4", "4~5", "5~6", "6~7", "7~8", "8~9", "9~10", "10~11", "11~12", "12~1", "1~2"];
+  const INITIAL_EMPLOYEES = [
+    {"id": "emp_1", "name": "MK", "rate": 0, "isOwner": true, "color": "#95DCF7"},
+    {"id": "emp_2", "name": "EO", "rate": 0, "isOwner": true, "color": "#FFC7CE"},
+    {"id": "emp_3", "name": "Mgr1", "rate": 25, "isOwner": false, "color": "#8ED873"},
+    {"id": "emp_4", "name": "Mgr2", "rate": 22, "isOwner": false, "color": "#FFFF99"},
+    {"id": "emp_5", "name": "Tm1", "rate": 22, "isOwner": false, "color": "#D76DCC"},
+    {"id": "emp_6", "name": "Tm2", "rate": 22, "isOwner": false, "color": "#BFBFBF"},
+    {"id": "emp_7", "name": "Tm3", "rate": 22, "isOwner": false, "color": "#F7FBAF"},
+    {"id": "emp_8", "name": "Tm4", "rate": 22, "isOwner": false, "color": "#E49EDD"},
+    {"id": "emp_9", "name": "Tm5", "rate": 22, "isOwner": false, "color": "#F6C6AC"},
+    {"id": "emp_10", "name": "Tm6", "rate": 22, "isOwner": false, "color": "#93C5FD"},
+    {"id": "emp_11", "name": "Tm7", "rate": 22, "isOwner": false, "color": "#A7F3D0"}
+  ];
+
+  const INITIAL_GRID_2SLOT = [[["Mgr1", ""], ["Mgr1", ""], ["Mgr1", ""], ["Mgr1", ""], ["Mgr1", ""], ["Mgr1", ""], ["", "MK"]], [["Mgr1", ""], ["Mgr1", ""], ["Mgr1", ""], ["Mgr1", ""], ["Mgr1", ""], ["Mgr1", ""], ["", "MK"]], [["Mgr1", ""], ["Mgr1", ""], ["Mgr1", ""], ["Mgr1", ""], ["Mgr1", ""], ["Mgr1", ""], ["", "MK"]], [["Mgr1", ""], ["Mgr1", ""], ["Mgr1", ""], ["Mgr1", ""], ["Mgr1", ""], ["Mgr1", ""], ["", "MK"]], [["Mgr1", ""], ["Mgr1", ""], ["Mgr1", ""], ["Mgr1", ""], ["Mgr1", ""], ["Mgr1", ""], ["", "MK"]], [["Mgr1", ""], ["Mgr1", "MK"], ["", "MK"], ["Mgr1", "MK"], ["Mgr1", "MK"], ["Mgr1", "MK"], ["", "MK"]], [["Mgr1", ""], ["Mgr1", "MK"], ["", "MK"], ["Mgr1", "MK"], ["Mgr1", "MK"], ["Mgr1", "MK"], ["", "MK"]], [["", "MK"], ["", "MK"], ["", "MK"], ["", "MK"], ["", "MK"], ["", "MK"], ["", "MK"]], [["", "MK"], ["", "MK"], ["", "MK"], ["", "MK"], ["", "MK"], ["", "MK"], ["", "MK"]], [["", "MK"], ["", "MK"], ["", "MK"], ["", "MK"], ["", "MK"], ["", "MK"], ["", "MK"]], [["", "MK"], ["", "MK"], ["", "MK"], ["", "MK"], ["", "MK"], ["", "MK"], ["", "MK"]], [["", "MK"], ["", "MK"], ["", "MK"], ["", "MK"], ["", "MK"], ["", "MK"], ["", "MK"]], [["", "MK"], ["", "MK"], ["Mgr2", ""], ["", "MK"], ["Mgr2", ""], ["Mgr2", ""], ["Mgr2", ""]], [["Mgr2", ""], ["Mgr2", ""], ["Mgr2", ""], ["Mgr2", ""], ["Mgr2", ""], ["Mgr2", ""], ["Mgr2", ""]], [["Mgr2", ""], ["Mgr2", ""], ["Mgr2", ""], ["Mgr2", ""], ["Mgr2", ""], ["Mgr2", ""], ["Mgr2", ""]], [["Mgr2", ""], ["Mgr2", ""], ["Mgr2", ""], ["Mgr2", ""], ["Mgr2", ""], ["Mgr2", ""], ["Mgr2", ""]], [["Mgr2", ""], ["Mgr2", ""], ["Mgr2", ""], ["Mgr2", ""], ["Mgr2", ""], ["Mgr2", ""], ["Mgr2", ""]], [["Mgr2", ""], ["Mgr2", ""], ["Mgr2", ""], ["Mgr2", ""], ["Mgr2", ""], ["Mgr2", ""], ["Mgr2", ""]], [["", ""], ["", ""], ["", ""], ["", ""], ["Mgr2", ""], ["Mgr2", ""], ["", ""]], [["", ""], ["", ""], ["", ""], ["", ""], ["Mgr2", ""], ["Mgr2", ""], ["", ""]]];
+
+  function normalizeGridTo3Slots(grid) {
+    return Array.from({ length: 20 }, (_, r) =>
+      Array.from({ length: 7 }, (_, d) => {
+        const cellArr = (grid && grid[r] && grid[r][d]) ? grid[r][d] : [];
+        return [cellArr[0] || '', cellArr[1] || '', cellArr[2] || ''];
+      })
+    );
+  }
+
+  const STORAGE_KEY_CURRENT = 'best_sids_current_state_v1';
+  const STORAGE_KEY_HISTORY = 'best_sids_weekly_history_v1';
+
+  let state = {
+    startDate: '2026-11-23',
+    employees: JSON.parse(JSON.stringify(INITIAL_EMPLOYEES)),
+    grid: normalizeGridTo3Slots(INITIAL_GRID_2SLOT),
+    expandedDays: [false, false, false, false, false, false, false]
+  };
+
+  let selectedEmpName = 'Mgr1';
+  let isMouseDown = false;
+  let dragMode = 'paint';
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const saved = localStorage.getItem(STORAGE_KEY_CURRENT);
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed && parsed.employees && parsed.grid) {
+          state.startDate = parsed.startDate || '2026-11-23';
+          state.employees = parsed.employees;
+          state.grid = normalizeGridTo3Slots(parsed.grid);
+          state.expandedDays = Array.isArray(parsed.expandedDays) && parsed.expandedDays.length === 7
+            ? parsed.expandedDays
+            : [false, false, false, false, false, false, false];
+        }
+      } catch (e) {
+        console.error('Failed to load saved state:', e);
+      }
+    }
+
+    document.getElementById('startDateInput').value = state.startDate;
+    document.getElementById('startDateInput').addEventListener('change', (e) => {
+      state.startDate = e.target.value;
+      renderAll();
+      autoSaveCurrent();
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (isMouseDown) {
+        isMouseDown = false;
+        autoSaveCurrent();
+      }
+    });
+
+    renderAll();
+    refreshHistoryDropdown();
+    if (getCloudUrl()) { pullFromCloud(false); }
+  });
+
+  function renderAll() {
+    renderPalette();
+    renderScheduleTable();
+    renderSummaryTable();
+  }
+
+  function showToast(msg, isError = false) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.style.background = isError ? '#f43f5e' : '#10b981';
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2400);
+  }
+
+  function autoSaveCurrent() {
+    localStorage.setItem(STORAGE_KEY_CURRENT, JSON.stringify(state));
+    if (getCloudUrl()) {
+      clearTimeout(cloudSyncTimer);
+      cloudSyncTimer = setTimeout(() => { pushCurrentToCloud(); }, 600);
+    }
+  }
+
+  function getDayHeadersInfo() {
+    const dateStr = state.startDate || '2026-11-23';
+    const parts = dateStr.split('-').map(Number);
+    const baseDate = new Date(parts[0], parts[1] - 1, parts[2]);
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'SAT'];
+
+    const info = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(baseDate);
+      d.setDate(baseDate.getDate() + i);
+      info.push({
+        dateText: `${d.getDate()}-${months[d.getMonth()]}`,
+        dayText: days[d.getDay()],
+        isWeekend: (d.getDay() === 0 || d.getDay() === 6)
+      });
+    }
+    return info;
+  }
+
+  function toggleDayThirdSlot(dIdx) {
+    state.expandedDays[dIdx] = !state.expandedDays[dIdx];
+    renderScheduleTable();
+    renderSummaryTable();
+    autoSaveCurrent();
+  }
+
+  function toggleAllThirdSlots() {
+    const anyCollapsed = state.expandedDays.some(v => !v);
+    state.expandedDays = [anyCollapsed, anyCollapsed, anyCollapsed, anyCollapsed, anyCollapsed, anyCollapsed, anyCollapsed];
+    renderScheduleTable();
+    renderSummaryTable();
+    autoSaveCurrent();
+    showToast(anyCollapsed ? '모든 요일의 3인 근무 줄을 펼쳤습니다.' : '모든 요일의 3인 근무 줄을 접었습니다.');
+  }
+
+  function dayHasThirdSlotData(dIdx) {
+    for (let r = 0; r < 20; r++) {
+      if (state.grid[r][dIdx][2]) return true;
+    }
+    return false;
+  }
+
+  function renderPalette() {
+    const container = document.getElementById('empPalette');
+    container.innerHTML = '<span class="palette-label">🎨 직원 선택:</span>';
+
+    state.employees.forEach(emp => {
+      const chip = document.createElement('button');
+      chip.className = 'emp-chip' + (selectedEmpName === emp.name ? ' active' : '');
+      chip.style.backgroundColor = emp.color || '#cbd5e1';
+      chip.textContent = emp.name;
+      chip.onclick = () => {
+        selectedEmpName = emp.name;
+        renderPalette();
+      };
+      container.appendChild(chip);
+    });
+
+    const eraser = document.createElement('button');
+    eraser.className = 'emp-chip eraser' + (selectedEmpName === '__ERASE__' ? ' active' : '');
+    eraser.innerHTML = '🧹 지우개';
+    eraser.onclick = () => {
+      selectedEmpName = '__ERASE__';
+      renderPalette();
+    };
+    container.appendChild(eraser);
+  }
+
+  function getEmployeeColor(name) {
+    if (!name) return null;
+    const found = state.employees.find(e => e.name === name);
+    return found ? found.color : '#cbd5e1';
+  }
+
+  function renderScheduleTable() {
+    const thead = document.getElementById('scheduleHead');
+    const tbody = document.getElementById('scheduleBody');
+    const dayInfos = getDayHeadersInfo();
+
+    let row1Html = `<tr><th colspan="2" style="background:#0f172a; color:#38bdf8; font-size:13.5px;">Sid's</th>`;
+    let row2Html = `<tr><th>구분</th><th>Time</th>`;
+
+    dayInfos.forEach((info, dIdx) => {
+      const isExp = state.expandedDays[dIdx];
+      const span = isExp ? 3 : 2;
+      const endCls = dIdx < 6 ? ' day-end' : '';
+      const wkCls = info.isWeekend ? ' weekend' : '';
+      const hasHidden = !isExp && dayHasThirdSlotData(dIdx);
+
+      row1Html += `<th colspan="${span}" class="date-header${endCls}">${info.dateText}</th>`;
+      row2Html += `
+        <th colspan="${span}" class="day-header${wkCls}${endCls}">
+          <div class="day-header-inner">
+            <span>${info.dayText}</span>
+            <button type="button"
+              class="expand-day-btn ${isExp ? 'expanded' : ''} ${hasHidden ? 'has-hidden-data' : ''}"
+              onclick="toggleDayThirdSlot(${dIdx})"
+              title="${isExp ? '3번째 근무자 줄 접기' : '바쁜 날 3번째 근무자 줄 펼치기'}">
+              ${isExp ? '−접기' : (hasHidden ? '+3인●' : '+3인')}
+            </button>
+          </div>
+        </th>`;
+    });
+
+    row1Html += `</tr>`;
+    row2Html += `</tr>`;
+    thead.innerHTML = row1Html + row2Html;
+
+    tbody.innerHTML = '';
+    TIME_SLOTS.forEach((timeLabel, rIdx) => {
+      const tr = document.createElement('tr');
+
+      if (rIdx === 0) {
+        const tdAm = document.createElement('td');
+        tdAm.rowSpan = 6;
+        tdAm.className = 'ampm-cell';
+        tdAm.textContent = 'AM';
+        tr.appendChild(tdAm);
+      } else if (rIdx === 6) {
+        const tdPm = document.createElement('td');
+        tdPm.rowSpan = 14;
+        tdPm.className = 'ampm-cell';
+        tdPm.textContent = 'PM';
+        tr.appendChild(tdPm);
+      }
+
+      const tdTime = document.createElement('td');
+      tdTime.className = 'time-cell';
+      tdTime.textContent = timeLabel;
+      tr.appendChild(tdTime);
+
+      for (let dIdx = 0; dIdx < 7; dIdx++) {
+        const isExp = state.expandedDays[dIdx];
+        const visibleSlots = isExp ? [0, 1, 2] : [0, 1];
+        const lastSlotIdx = visibleSlots[visibleSlots.length - 1];
+
+        visibleSlots.forEach((slotIdx) => {
+          const td = document.createElement('td');
+          const val = state.grid[rIdx][dIdx][slotIdx] || '';
+          const isDayEnd = (slotIdx === lastSlotIdx && dIdx < 6);
+          td.className = 'slot-cell'
+            + (val === '' ? ' empty' : '')
+            + (slotIdx === 2 ? ' slot-3' : '')
+            + (isDayEnd ? ' day-end' : '');
+          td.dataset.r = rIdx;
+          td.dataset.d = dIdx;
+          td.dataset.s = slotIdx;
+          td.textContent = val;
+
+          if (val) {
+            td.style.backgroundColor = getEmployeeColor(val);
+            td.style.color = '#0f172a';
+          }
+
+          td.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            isMouseDown = true;
+            if (e.button === 2 || selectedEmpName === '__ERASE__') {
+              dragMode = 'erase';
+              applyCellChange(rIdx, dIdx, slotIdx, '');
+            } else {
+              dragMode = 'paint';
+              applyCellChange(rIdx, dIdx, slotIdx, selectedEmpName);
+            }
+          });
+
+          td.addEventListener('mouseenter', () => {
+            if (!isMouseDown) return;
+            if (dragMode === 'erase') {
+              applyCellChange(rIdx, dIdx, slotIdx, '');
+            } else {
+              applyCellChange(rIdx, dIdx, slotIdx, selectedEmpName);
+            }
+          });
+
+          td.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            applyCellChange(rIdx, dIdx, slotIdx, '');
+            autoSaveCurrent();
+          });
+
+          tr.appendChild(td);
+        });
+      }
+
+      tbody.appendChild(tr);
+    });
+  }
+
+  function applyCellChange(rIdx, dIdx, slotIdx, newVal) {
+    if (state.grid[rIdx][dIdx][slotIdx] === newVal) return;
+    state.grid[rIdx][dIdx][slotIdx] = newVal;
+
+    const selector = `td.slot-cell[data-r="${rIdx}"][data-d="${dIdx}"][data-s="${slotIdx}"]`;
+    const td = document.querySelector(selector);
+    if (td) {
+      td.textContent = newVal;
+      if (newVal) {
+        td.classList.remove('empty');
+        td.style.backgroundColor = getEmployeeColor(newVal);
+        td.style.color = '#0f172a';
+      } else {
+        td.classList.add('empty');
+        td.style.backgroundColor = '';
+        td.style.color = 'transparent';
+      }
+    }
+    renderSummaryTable();
+  }
+
+  function renderSummaryTable() {
+    const thead = document.getElementById('summaryHead');
+    const tbody = document.getElementById('summaryBody');
+    const dayInfos = getDayHeadersInfo();
+
+    let headHtml = `<tr><th>시급 ($/hr)</th><th>Emp Name</th>`;
+    dayInfos.forEach((info, dIdx) => {
+      const span = state.expandedDays[dIdx] ? 3 : 2;
+      const wkCls = info.isWeekend ? ' weekend' : '';
+      headHtml += `<th colspan="${span}" class="summary-day-th${wkCls} day-end">${info.dayText}</th>`;
+    });
+    headHtml += `<th>hrs</th><th>Wage $/Week</th><th class="no-print">관리</th></tr>`;
+    thead.innerHTML = headHtml;
+
+    tbody.innerHTML = '';
+
+    let grandTotalHrs = 0;
+    let grandTotalWage = 0;
+
+    for (let r = 0; r < 20; r++) {
+      for (let d = 0; d < 7; d++) {
+        for (let s = 0; s < 3; s++) {
+          if (state.grid[r][d][s]) grandTotalHrs++;
+        }
+      }
+    }
+
+    state.employees.forEach((emp, empIdx) => {
+      const tr = document.createElement('tr');
+
+      const tdRate = document.createElement('td');
+      tdRate.className = 'editable-rate-cell';
+      if (emp.isOwner) {
+        tdRate.innerHTML = `<span style="color:#475569; font-size:11px;">Owner</span>`;
+      } else {
+        const rateInput = document.createElement('input');
+        rateInput.type = 'number';
+        rateInput.className = 'editable-rate-input';
+        rateInput.value = emp.rate;
+        rateInput.min = 0;
+        rateInput.step = 0.5;
+        rateInput.title = '클릭하여 시급 수정';
+        rateInput.addEventListener('change', (e) => {
+          emp.rate = parseFloat(e.target.value) || 0;
+          renderSummaryTable();
+          autoSaveCurrent();
+          showToast(`${emp.name} 시급이 $${emp.rate}/hr로 변경되었습니다.`);
+        });
+        tdRate.appendChild(rateInput);
+      }
+      tr.appendChild(tdRate);
+
+      const tdName = document.createElement('td');
+      tdName.className = 'editable-name-cell';
+      tdName.style.borderLeft = `6px solid ${emp.color || '#94a3b8'}`;
+
+      const nameInput = document.createElement('input');
+      nameInput.type = 'text';
+      nameInput.className = 'editable-name-input';
+      nameInput.value = emp.name;
+      nameInput.title = '클릭하여 직원 이름 수정 (일정표 자동 반영)';
+      nameInput.addEventListener('change', (e) => {
+        const oldName = emp.name;
+        const newName = e.target.value.trim();
+        if (!newName) {
+          e.target.value = oldName;
+          return;
+        }
+        if (state.employees.some((item, idx) => idx !== empIdx && item.name === newName)) {
+          showToast('이미 존재하는 직원 이름입니다.', true);
+          e.target.value = oldName;
+          return;
+        }
+        for (let r = 0; r < 20; r++) {
+          for (let d = 0; d < 7; d++) {
+            for (let s = 0; s < 3; s++) {
+              if (state.grid[r][d][s] === oldName) {
+                state.grid[r][d][s] = newName;
+              }
+            }
+          }
+        }
+        if (selectedEmpName === oldName) selectedEmpName = newName;
+        emp.name = newName;
+        renderAll();
+        autoSaveCurrent();
+        showToast(`직원 이름이 "${oldName}" → "${newName}"(으)로 변경되었습니다.`);
+      });
+      tdName.appendChild(nameInput);
+      tr.appendChild(tdName);
+
+      let empWeeklyHrs = 0;
+      for (let dIdx = 0; dIdx < 7; dIdx++) {
+        const isExp = state.expandedDays[dIdx];
+        const visibleSlots = isExp ? [0, 1, 2] : [0, 1];
+        const lastSlotIdx = visibleSlots[visibleSlots.length - 1];
+
+        const slotCounts = [0, 0, 0];
+        for (let rIdx = 0; rIdx < 20; rIdx++) {
+          if (state.grid[rIdx][dIdx][0] === emp.name) slotCounts[0]++;
+          if (state.grid[rIdx][dIdx][1] === emp.name) slotCounts[1]++;
+          if (state.grid[rIdx][dIdx][2] === emp.name) slotCounts[2]++;
+        }
+        empWeeklyHrs += (slotCounts[0] + slotCounts[1] + slotCounts[2]);
+
+        visibleSlots.forEach((slotIdx) => {
+          let displayCount = slotCounts[slotIdx];
+          if (!isExp && slotIdx === 1 && slotCounts[2] > 0) {
+            displayCount += slotCounts[2];
+          }
+          const tdCnt = document.createElement('td');
+          tdCnt.className = 'count-cell'
+            + (displayCount === 0 ? ' zero' : '')
+            + (slotIdx === lastSlotIdx ? ' day-end' : '');
+          tdCnt.textContent = displayCount;
+          tr.appendChild(tdCnt);
+        });
+      }
+
+      const tdHrs = document.createElement('td');
+      tdHrs.className = 'total-hrs-cell';
+      tdHrs.textContent = empWeeklyHrs;
+      tr.appendChild(tdHrs);
+
+      const weeklyWage = emp.isOwner ? 0 : empWeeklyHrs * emp.rate;
+      grandTotalWage += weeklyWage;
+      const tdWage = document.createElement('td');
+      tdWage.className = 'wage-cell';
+      tdWage.textContent = emp.isOwner ? '$0' : '$' + weeklyWage.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+      tr.appendChild(tdWage);
+
+      const tdAct = document.createElement('td');
+      tdAct.className = 'no-print';
+      const delBtn = document.createElement('button');
+      delBtn.className = 'del-emp-btn';
+      delBtn.innerHTML = '✕';
+      delBtn.title = '직원 삭제';
+      delBtn.onclick = () => deleteEmployee(empIdx);
+      tdAct.appendChild(delBtn);
+      tr.appendChild(tdAct);
+
+      tbody.appendChild(tr);
+    });
+
+    document.getElementById('totalAssignedHrs').textContent = `${grandTotalHrs} hrs`;
+    document.getElementById('totalWeeklyWage').textContent = '$' + grandTotalWage.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+  }
+
+  function registerNewEmployee() {
+    const nameInput = document.getElementById('newEmpName');
+    const rateInput = document.getElementById('newEmpRate');
+    const colorInput = document.getElementById('newEmpColor');
+
+    const name = nameInput.value.trim();
+    const rate = parseFloat(rateInput.value) || 0;
+    const color = colorInput.value;
+
+    if (!name) {
+      showToast('직원 이름을 입력해주세요.', true);
+      nameInput.focus();
+      return;
+    }
+
+    if (state.employees.some(e => e.name.toLowerCase() === name.toLowerCase())) {
+      showToast('이미 등록된 직원 이름입니다.', true);
+      return;
+    }
+
+    state.employees.push({
+      id: 'emp_' + Date.now(),
+      name: name,
+      rate: rate,
+      isOwner: false,
+      color: color
+    });
+
+    selectedEmpName = name;
+    nameInput.value = '';
+    const paletteColors = ['#38bdf8', '#fb923c', '#a78bfa', '#4ade80', '#f472b6', '#facc15', '#2dd4bf'];
+    colorInput.value = paletteColors[state.employees.length % paletteColors.length];
+
+    renderPalette();
+    renderSummaryTable();
+    autoSaveCurrent();
+    showToast(`신규 직원 "${name}" ($${rate}/hr) 등록 완료!`);
+  }
+
+  function deleteEmployee(idx) {
+    const emp = state.employees[idx];
+    if (!confirm(`"${emp.name}" 직원을 목록에서 삭제하시겠습니까?`)) return;
+    state.employees.splice(idx, 1);
+    if (selectedEmpName === emp.name && state.employees.length > 0) {
+      selectedEmpName = state.employees[0].name;
+    }
+    renderAll();
+    autoSaveCurrent();
+    showToast(`"${emp.name}" 직원이 삭제되었습니다.`);
+  }
+
+  function clearScheduleGrid() {
+    if (!confirm('현재 주간 시간표의 모든 배정을 비우시겠습니까?')) return;
+    state.grid = normalizeGridTo3Slots([]);
+    renderScheduleTable();
+    renderSummaryTable();
+    autoSaveCurrent();
+    showToast('시간표가 초기화되었습니다.');
+  }
+
+  function getHistoryList() {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY_HISTORY)) || [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function refreshHistoryDropdown(selectedId = '') {
+    const select = document.getElementById('historySelect');
+    const list = getHistoryList();
+    select.innerHTML = '<option value="">-- 저장된 주간 기록 선택 (' + list.length + '건) --</option>';
+    list.forEach(item => {
+      const opt = document.createElement('option');
+      opt.value = item.id;
+      opt.textContent = `${item.weekLabel} (${item.totalHrs}hrs / $${item.totalWage.toLocaleString()})`;
+      if (item.id === selectedId) opt.selected = true;
+      select.appendChild(opt);
+    });
+  }
+
+  function saveCurrentWeekHistory() {
+    const list = getHistoryList();
+    const startDate = state.startDate || '미지정';
+
+    let totalHrs = 0;
+    let totalWage = 0;
+    state.employees.forEach(emp => {
+      let hrs = 0;
+      for (let r = 0; r < 20; r++) {
+        for (let d = 0; d < 7; d++) {
+          if (state.grid[r][d][0] === emp.name) hrs++;
+          if (state.grid[r][d][1] === emp.name) hrs++;
+          if (state.grid[r][d][2] === emp.name) hrs++;
+        }
+      }
+      totalHrs += hrs;
+      if (!emp.isOwner) totalWage += hrs * emp.rate;
+    });
+
+    const now = new Date();
+    const savedTime = `${now.getMonth()+1}/${now.getDate()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+    const weekLabel = `${startDate} 주차 [${savedTime} 저장]`;
+    const newId = 'hist_' + Date.now();
+
+    list.unshift({
+      id: newId,
+      weekLabel: weekLabel,
+      startDate: startDate,
+      totalHrs: totalHrs,
+      totalWage: totalWage,
+      snapshot: JSON.parse(JSON.stringify(state))
+    });
+
+    localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(list));
+    refreshHistoryDropdown(newId);
+    pushHistoryToCloud('saveHistory', { historyItem: list[0] });
+    showToast(`"${startDate} 주차" 히스토리가 저장되었습니다!`);
+  }
+
+  function loadHistory(histId) {
+    if (!histId) return;
+    const list = getHistoryList();
+    const found = list.find(item => item.id === histId);
+    if (!found) return;
+
+    state.startDate = found.snapshot.startDate || '2026-11-23';
+    state.employees = found.snapshot.employees;
+    state.grid = normalizeGridTo3Slots(found.snapshot.grid);
+    state.expandedDays = Array.isArray(found.snapshot.expandedDays) && found.snapshot.expandedDays.length === 7
+      ? found.snapshot.expandedDays
+      : [false, false, false, false, false, false, false];
+
+    document.getElementById('startDateInput').value = state.startDate;
+    if (state.employees.length > 0 && !state.employees.some(e => e.name === selectedEmpName)) {
+      selectedEmpName = state.employees[0].name;
+    }
+
+    renderAll();
+    autoSaveCurrent();
+    showToast(`히스토리 불러오기 완료: ${found.weekLabel}`);
+  }
+
+  function deleteSelectedHistory() {
+    const select = document.getElementById('historySelect');
+    const histId = select.value;
+    if (!histId) {
+      showToast('삭제할 히스토리를 먼저 선택해주세요.', true);
+      return;
+    }
+    if (!confirm('선택한 주간 히스토리 기록을 삭제하시겠습니까?')) return;
+    const list = getHistoryList().filter(item => item.id !== histId);
+    localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(list));
+    refreshHistoryDropdown('');
+    pushHistoryToCloud('deleteHistory', { historyId: histId });
+    showToast('선택한 히스토리가 삭제되었습니다.');
+  }
+
+  function exportToCSV() {
+    const rows = [];
+    rows.push(["Best Sid's Weekly Schedule (3-Shift Capable)", "Start Date:", state.startDate]);
+    rows.push(["Time", "Mon-1", "Mon-2", "Mon-3", "Tue-1", "Tue-2", "Tue-3", "Wed-1", "Wed-2", "Wed-3", "Thu-1", "Thu-2", "Thu-3", "Fri-1", "Fri-2", "Fri-3", "SAT-1", "SAT-2", "SAT-3", "SUN-1", "SUN-2", "SUN-3"]);
+
+    TIME_SLOTS.forEach((t, rIdx) => {
+      const row = [t];
+      for (let d = 0; d < 7; d++) {
+        row.push(state.grid[rIdx][d][0] || '');
+        row.push(state.grid[rIdx][d][1] || '');
+        row.push(state.grid[rIdx][d][2] || '');
+      }
+      rows.push(row);
+    });
+
+    rows.push([]);
+    rows.push(["Hourly Rate", "Emp Name", "Mon-1", "Mon-2", "Mon-3", "Tue-1", "Tue-2", "Tue-3", "Wed-1", "Wed-2", "Wed-3", "Thu-1", "Thu-2", "Thu-3", "Fri-1", "Fri-2", "Fri-3", "SAT-1", "SAT-2", "SAT-3", "SUN-1", "SUN-2", "SUN-3", "Total Hrs", "Wage $/Week"]);
+
+    state.employees.forEach(emp => {
+      const row = [emp.isOwner ? 0 : emp.rate, emp.name];
+      let totalHrs = 0;
+      for (let d = 0; d < 7; d++) {
+        for (let s = 0; s < 3; s++) {
+          let c = 0;
+          for (let r = 0; r < 20; r++) {
+            if (state.grid[r][d][s] === emp.name) c++;
+          }
+          totalHrs += c;
+          row.push(c);
+        }
+      }
+      row.push(totalHrs);
+      row.push(emp.isOwner ? 0 : totalHrs * emp.rate);
+      rows.push(row);
+    });
+
+    const csvContent = "\uFEFF" + rows.map(e => e.join(",")).join("\n");
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `Best_Sids_Schedule_${state.startDate}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('엑셀(CSV) 파일로 내보냈습니다!');
+  }
+</script>
+</body>
+</html>
